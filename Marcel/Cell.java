@@ -4,6 +4,7 @@ public class Cell{
 	private int multiplier;
 	private boolean empty;
 	private int points;
+	private boolean blocked;
 	
 	
 	/** Constructor: empty cell with multiplier
@@ -44,6 +45,14 @@ public class Cell{
 	public boolean isEmpty() {
 		return this.empty;
 	}
+	
+	public boolean isBlocked() {
+		return this.blocked;
+	}
+	
+	public void block() {
+		this.blocked = true;
+	}
 
 	/** Sets the contents of the cell 
 	* @param letter         the letter
@@ -51,11 +60,12 @@ public class Cell{
 	* @return       true if success, false otherwise 
 	*/
 	public boolean setLetter(char letter, int points) {
-		if(isEmpty()) {
+		if(this.isEmpty()) {
 			System.out.println("Setting Letter");
 			this.letter = letter;
 			this.points = points;
 			this.empty = false;
+			this.blocked = true;
 			return true;
 		}
 		else return false;

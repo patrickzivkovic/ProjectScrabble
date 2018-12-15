@@ -29,14 +29,16 @@ public class SimpleScrabble{
 		
 		// Creating multidimensional array of class Cell
 		this.board = new Cell [size][size]; // Cells are not instantiated yet
+
 		
 		//Instantiate:
-//		for(int zeile = 0; zeile < size; zeile++) {
-//			for(int spalte = 0; spalte < size; spalte++) {
-//				this.board[zeile][spalte] = new Cell(1);
-//			}
-//		}
-		clear();
+		for(int zeile = 0; zeile < size; zeile++) {
+			for(int spalte = 0; spalte < size; spalte++) {
+				this.board[zeile][spalte] = new Cell(1);
+			}
+		}
+
+		
 	}
 
 	/** Sets the multiplier of a board cell only if the cell is empty, otherwise no change is made
@@ -52,11 +54,25 @@ public class SimpleScrabble{
 //
 //	// Clears the board, resets game to initial state       
 	public void clear() {
-		for(int zeile = 0; zeile < size; zeile++) {
-			for(int spalte = 0; spalte < size; spalte++) {
+		for(int zeile = 0; zeile < this.size; zeile++) {
+			for(int spalte = 0; spalte < this.size; spalte++) {
 				this.board[zeile][spalte] = new Cell(1);
-				this.free[zeile][spalte] = true;
+//				this.free[zeile][spalte] = true;
 			}
+		}
+	}
+	
+	public void printBlocked() {
+		System.out.println("Blocked Fields");
+		for (int i = 0; i < this.size; i++) {
+			for (int j = 0; j < this.size; j ++) {
+				if(this.board[i][j].isBlocked()) {
+					System.out.print("X");
+				}else {
+					System.out.print(".");
+				}
+			}
+			System.out.println();
 		}
 	}
 //
@@ -68,48 +84,238 @@ public class SimpleScrabble{
 //	* @return                       the number of points for the word, or -1 if tiles could not be placed                   
 //	*/
 	public int placeTilesDisjoint(int x, int y, int direction, String letters) {
-		//Check if letters is in dictionary:
-//		if(letters not in dictionary) return -1
-		if(!condition1(letters)) return -1;
-//		if(not enough letters) retuern -1
-		if(!condition2(letters)) return -1;
-//		if(atleast one field blocked  return -1)
-		
-		
-//		char [] charletters = letters.toCharArray();
-		
-		//von links nach rechts setzen:
-		
-		for(int i = 0; i < letters.length(); i ++) {
-			
-			char einf = letters.charAt(i);
-			int points = this.lPoints[index_of_character(einf)];
-						
-			board[x+i][y].setLetter(einf, points);
-
-		}
-
-		//von oben nach unten
-		
-		for(int i = 0; i < letters.length(); i ++) {
-			
-			char einf = letters.charAt(i);
-			int points = this.lPoints[index_of_character(einf)];
-						
-			board[x][y+i].setLetter(einf, points);
-
-		}
 
 		
 		
 		// Catch x, y, out of bound
-
-		// Catch direction invalid values
+		if(x < 0 || x >= this.size || y < 0 || y >= this.size) return -1;
 		
-		// Catch word too long (size-x >= wordsize, dann valid)
+		// Catch direction invalid values
+		if(direction != 0 && direction != 1) return -1;
+		
+		// Catch word too long 
+		if(direction == 0) {
+			if(this.size - x < letters.length()) return -1;
+		}else {
+			if(this.size - y < letters.length()) return -1;
+		}
+	
+		//Check if letters is in dictionary:
+		if(!condition1(letters)) return -1;
+		
+		//Array with numbers how often we need each letter
+		int [] nrLettersNeeded = nrLettersNeeded(letters);
+
+		//Check if enough letters
+		if(!condition2(letters, nrLettersNeeded)) return -1;
+
+		//Check if none of the fields are blocked
+		if(!condition3(letters, x, y, direction)) return -1;
+
+		
+		int points;
+		//Set word
+		//von links nach rechts setzen:
+		if(direction == 0) {
+			points = insert_left_to_right(letters, x, y);
+			//das ist einfuegen und blocken
+		}else {
+			//von oben nach unten
+			points = insert_top_to_bottom(letters, x, y);
+			//das ist einfuegen und blocken
+		}
+		
+		update_lTiles(nrLettersNeeded);
+		return points;
+	
+	}
+	private void update_lTiles(int [] nrLettersNeeded) {
+		for(int i = 0; i < this.lTiles.length; i ++) {
+			this.lTiles[i] -= nrLettersNeeded[i];
+		}
 		
 	}
-	
+	private boolean condition3(String letters, int x, int y, int direction) {
+		if(direction == 0) {
+			// left to right
+			for(int i = 0; i < letters.length(); i ++) {
+				if(this.board[x+i][y].isBlocked()) return false;
+			}
+			return true;
+		}else {
+			// top to bottom
+			for(int i = 0; i < letters.length(); i ++) {
+				if(this.board[x][y+i].isBlocked()) return false;
+			}
+			return true;
+		}
+	}
+	private void block_cells_first(int x, int y, int direction) {
+		// (x, y) position of character
+		if(direction == 0) {
+
+			if(y+1 <= this.size - 1) 
+				//Blocking above the e
+				System.out.println("Blocked, before blocking?: " + this.board[x][y+1].isBlocked());
+				this.board[x][y+1].block();
+				System.out.println("Blocked, after blocking?: " + this.board[x][y+1].isBlocked());
+				
+			
+			if(y-1 >= 0) 
+				this.board[x][y-1].block();
+			
+			if(x - 1 >= 0) 
+				this.board[x-1][y].block();	
+			
+			if(x - 1 >= 0 && y + 1 <= this.size-1) 
+				this.board[x-1][y+1].block();
+			
+			if(x-1 >= 0 && y - 1 >= 0) 
+				this.board[x-1][y-1].block();
+				
+		}else {
+			
+
+			
+			if(x+1 <= this.size - 1)
+				this.board[x+1][y].block();
+			
+			if(x-1 >= 0) 
+				this.board[x-1][y].block();
+			
+			
+			if(y-1 >= 0) 
+				this.board[x][y-1].block();
+			
+			if(x + 1 <= this.size - 1 && y - 1 >= 0) 
+				this.board[x+1][y-1].block();
+			
+			if(x - 1 >= 0 && y - 1 >= 0) 
+				this.board[x-1][y-1].block();
+		}
+	}
+	private void block_cells_middle(int x, int y, int direction) {
+		if(direction == 0) {
+			if(y + 1 <= this.size -1) 
+				this.board[x][y+1].block();
+			
+			if(y-1 >= 0) 
+				this.board[x][y-1].block();
+		}else {
+
+			if(x+1 <= this.size - 1)
+				this.board[x+1][y].block();
+			
+			if(x-1 >= 0) 
+				this.board[x-1][y].block();
+			
+		}		
+	}
+	private void block_cells_last(int x, int y, int direction) {
+		if(direction == 0) {
+			//top and bottom from current character
+			if(y-1 >= 0) 
+				this.board[x][y-1].block();
+			
+			if(y+1 <= this.size - 1 )
+				this.board[x][y+1].block();
+			
+			//Right straight, right diagonal up and right diagonal down
+
+			if(x+1 <= this.size - 1) 
+				this.board[x + 1][y].block();
+			
+			if(x+1 <= this.size - 1 && y - 1 >= 0)
+				this.board[x + 1][y-1].block();
+			
+			if(x+1 <= this.size - 1 && y + 1 <= this.size - 1)
+				this.board[x + 1][y+1].block();
+		}else {
+			//top down
+			
+			
+			//left and right from current
+			if(x+1 <= this.size - 1) 
+				this.board[x+1][y].block();
+			
+			if(x - 1 >= 0) 
+				this.board[x-1][y].block();
+			
+			// bottom left diag, bottom right diag and bottom straigt
+			if(y+1 <= this.size - 1) 
+				this.board[x][y+1].block();
+			
+			if(x+1 <= this.size - 1 && y + 1 <= this.size)
+				this.board[x+1][y+1].block();
+			
+			if(x - 1 >= 0 && y+1 <= this.size - 1) 
+				this.board[x-1][y+1].block();
+		}
+	}
+	private int insert_top_to_bottom(String letters, int x, int y) {
+		int len = letters.length();
+		int last = len - 1;
+		
+		int pointsword = 0;
+		for(int i = 0; i < letters.length(); i ++) {
+			
+			char einf = letters.charAt(i);
+			int points = this.lPoints[index_of_character(einf)];
+						
+			this.board[y+i][x].setLetter(einf, points);
+			pointsword += this.board[y+i][x].getValue();
+			
+			if(i == 0) {
+				if(x != 0 && y != 0 && x != this.size - 1 && y != this.size - 1)
+				//First Letter
+				block_cells_first(x, y+i, 1);
+				
+			}else if (i == last) {
+				//Last letter
+				block_cells_last(x, y+i, 1);
+			}else {
+				// Middle letter
+				block_cells_middle(x, y+i, 1);
+			}
+
+			
+			
+
+		}
+		
+		return pointsword;
+
+	}
+	private int insert_left_to_right(String letters, int x, int y) {
+		int len = letters.length();
+		int last = len - 1;
+		int pointsword = 0;
+		for(int i = 0; i < len ; i ++) {
+			
+			char einf = letters.charAt(i);
+			int points = this.lPoints[index_of_character(einf)];
+						
+			this.board[y][x+i].setLetter(einf, points);
+			pointsword += this.board[y][x+i].getValue();
+			
+			if(i == 0) {
+				//First Letter
+				block_cells_first(y, x+i, 0);
+				
+			}else if (i == last) {
+				//Last letter
+				block_cells_last(y, x+i, 0);
+			}else {
+				// Middle letter
+				block_cells_middle(y, x+i, 0);
+			}
+
+		}
+
+		
+		return pointsword;
+		
+	}
 	private int index_of_character(char c) {
 
 		/*
@@ -124,7 +330,6 @@ public class SimpleScrabble{
 		}
 		return -1;
 	}
-	
 	private int[] nrLettersNeeded (String letters) {
 
 		/*
@@ -159,23 +364,31 @@ public class SimpleScrabble{
 		
 		return nrLettersNeeded;
 	}
-
-	private boolean condition2(String letters) {
-		int [] nrLettersNeeded = nrLettersNeeded(letters);
+	private boolean condition2(String letters, int [] nrLettersNeeded) {
+//		int [] nrLettersNeeded = nrLettersNeeded(letters);
 		
 		for(int i = 0; i < nrLettersNeeded.length; i ++) {
 			if(nrLettersNeeded[i] > this.lTiles[i]) return false;
 		}
 		return true;
 	}
-	
 	private boolean condition1(String letters) {
 		for(String dictionary_element: this.dictionary) {
 			if(dictionary_element.equals(letters)) return true;
 		}
 		return false;
 	}
+	public int placeTiles() {
+		return 0;
+	}
 //
 //	// Prints the contents of the board, see format from example below
-//	public void printBoard()
+	public void printBoard() {
+		for(int i = 0; i < this.size; i ++) {
+			for(int j = 0; j < this.size; j ++) {
+				System.out.print(this.board[i][j].getLetter());
+			}
+			System.out.println();
+		}
+	}
 }
