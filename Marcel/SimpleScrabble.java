@@ -67,7 +67,11 @@ public class SimpleScrabble{
 		for (int i = 0; i < this.size; i++) {
 			for (int j = 0; j < this.size; j ++) {
 				if(this.board[i][j].isBlocked()) {
-					System.out.print("X");
+					if(this.board[i][j].isEmpty()) {
+						System.out.print("X");
+					}else {
+						System.out.print(this.board[i][j].getLetter());
+					}
 				}else {
 					System.out.print(".");
 				}
