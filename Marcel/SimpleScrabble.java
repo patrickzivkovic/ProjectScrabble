@@ -58,8 +58,10 @@ public class SimpleScrabble{
 	public void clear() {
 		for(int zeile = 0; zeile < this.size; zeile++) {
 			for(int spalte = 0; spalte < this.size; spalte++) {
-				this.board[zeile][spalte] = new Cell(1);
+//				this.board[zeile][spalte] = new Cell(1);
 //				this.free[zeile][spalte] = true;
+				this.board[zeile][spalte].reset();
+				
 			}
 		}
 	}

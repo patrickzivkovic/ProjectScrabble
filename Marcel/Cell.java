@@ -32,6 +32,13 @@ public class Cell{
 		}else return '.';
 	}
 
+	public void reset() {
+		this.empty = true;
+		this.blocked = false;
+		this.multiplier = 1; //maybe comment out
+		this.letter = '9';
+		this.points = 0;
+	}
 	/** Gets the value of the cell 
 	* @return cell value equals the letter points multiplied by cell multiplier
 	* @return zero if cell empty 
