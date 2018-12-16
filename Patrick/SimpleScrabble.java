@@ -298,7 +298,7 @@ public class SimpleScrabble{
 			if(y+1 <= this.size - 1) 
 				this.board[y+1][x].block();
 			// bottom right
-			if(x+1 <= this.size - 1 && y + 1 <= this.size)
+			if(x+1 <= this.size - 1 && y + 1 <= this.size-1)
 				this.board[y+1][x+1].block();
 			// bottom left
 			if(x - 1 >= 0 && y+1 <= this.size - 1) 
@@ -308,12 +308,14 @@ public class SimpleScrabble{
 	private int insert_top_to_bottom(String letters, int x, int y) {
 		int len = letters.length();
 		int last = len - 1;
-		
+		int points = 0;
 		int pointsword = 0;
 		for(int i = 0; i < letters.length(); i ++) {
 			
 			char einf = letters.charAt(i);
-			int points = this.lPoints[index_of_character(einf)];
+			int index = index_of_character(einf);
+			if(index != -1)  
+           points = this.lPoints[index];
 						
 			this.board[y+i][x].setLetter(einf, points);
 			pointsword += this.board[y+i][x].getValue();
@@ -342,10 +344,13 @@ public class SimpleScrabble{
 		int len = letters.length();
 		int last = len - 1;
 		int pointsword = 0;
+      int points = 0;
 		for(int i = 0; i < len ; i ++) {
 			
 			char einf = letters.charAt(i);
-			int points = this.lPoints[index_of_character(einf)];
+         int index = index_of_character(einf);
+			if(index != -1)  
+           points = this.lPoints[index];
 						
 			this.board[y][x+i].setLetter(einf, points);
 			pointsword += this.board[y][x+i].getValue();
