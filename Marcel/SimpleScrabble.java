@@ -10,7 +10,7 @@ public class SimpleScrabble{
 	private Cell [][] board;
 	
 	
-	private boolean [][] free;
+	//private boolean [][] free;
 	
 	/** Constructor: new SimpleScrabble game
 	* @param dictionary             list of valid words 
@@ -58,9 +58,9 @@ public class SimpleScrabble{
 	public void clear() {
 		for(int zeile = 0; zeile < this.size; zeile++) {
 			for(int spalte = 0; spalte < this.size; spalte++) {
-//				this.board[zeile][spalte] = new Cell(1);
+				this.board[zeile][spalte] = new Cell(1);
 //				this.free[zeile][spalte] = true;
-				this.board[zeile][spalte].reset();
+//				this.board[zeile][spalte].reset();
 				
 			}
 		}
@@ -96,39 +96,63 @@ public class SimpleScrabble{
 		
 		
 		// Catch x, y, out of bound
-		if(x < 0 || x >= this.size || y < 0 || y >= this.size) return -1;
+		if(x < 0 || x >= this.size || y < 0 || y >= this.size) {
+			System.out.println("x or y out of bound");
+			return -1;
+		}
 		
 		// Catch direction invalid values
-		if(direction != 0 && direction != 1) return -1;
+		if(direction != 0 && direction != 1) {
+			System.out.println("direction invalid");
+			return -1;
+		}
 		
 		// Catch word too long 
 		if(direction == 0) {
-			if(this.size - x < letters.length()) return -1;
+			if(this.size - x < letters.length()) {
+				System.out.println("Word too long");
+				return -1;
+			}
 		}else {
-			if(this.size - y < letters.length()) return -1;
+			if(this.size - y < letters.length()) {
+				System.out.println("Word too long");
+				return -1;
+			}
 		}
 	
 		//Check if letters is in dictionary:
-		if(!condition1(letters)) return -1;
+		if(!condition1(letters)) {
+			System.out.println("Letters for " + letters + " not in dictionary");
+			return -1;
+		}
 		
 		//Array with numbers how often we need each letter
 		int [] nrLettersNeeded = nrLettersNeeded(letters);
 
 		//Check if enough letters
-		if(!condition2(letters, nrLettersNeeded)) return -1;
+		if(!condition2(letters, nrLettersNeeded)) {
+			System.out.println("Not enough letters for " + letters);
+			return -1;
+		}
 
 		//Check if none of the fields are blocked
-		if(!condition3(letters, x, y, direction)) return -1;
+		if(!condition3(letters, x, y, direction)) {
+			System.out.println("Fields are blocked");
+			return -1;
+		}
 
 		
 		int points;
 		//Set word
 		//von links nach rechts setzen:
 		if(direction == 0) {
+			System.out.println("Placing " + letters + " from left to right at x: " + x + ", y: " + y);
 			points = insert_left_to_right(letters, x, y);
 			//das ist einfuegen und blocken
 		}else {
 			//von oben nach unten
+			System.out.println("Placing " + letters + " from top to bottom at x: " + x + ", y: " + y);
+			
 			points = insert_top_to_bottom(letters, x, y);
 			//das ist einfuegen und blocken
 		}
@@ -298,7 +322,7 @@ public class SimpleScrabble{
 			if(y+1 <= this.size - 1) 
 				this.board[y+1][x].block();
 			// bottom right
-			if(x+1 <= this.size - 1 && y + 1 <= this.size)
+			if(x+1 <= this.size - 1 && y + 1 <= this.size-1)
 				this.board[y+1][x+1].block();
 			// bottom left
 			if(x - 1 >= 0 && y+1 <= this.size - 1) 
@@ -308,30 +332,35 @@ public class SimpleScrabble{
 	private int insert_top_to_bottom(String letters, int x, int y) {
 		int len = letters.length();
 		int last = len - 1;
-		
+		int points = 0;
 		int pointsword = 0;
 		for(int i = 0; i < letters.length(); i ++) {
 			
 			char einf = letters.charAt(i);
-			int points = this.lPoints[index_of_character(einf)];
-						
-			this.board[y+i][x].setLetter(einf, points);
-			pointsword += this.board[y+i][x].getValue();
-			
-			if(i == 0) {
-				//First Letter
-				block_cells_first(x, y+i, 1);
+			int index = index_of_character(einf);
+//			System.out.println("Index of character " + einf + ": " + index);
+			if(index != -1)  {
+				points = this.lPoints[index];
+//				System.out.println("Setting character " + einf);
+				this.board[y+i][x].setLetter(einf, points);
+				pointsword += this.board[y+i][x].getValue();
 				
-			}else if (i == last) {
-				//Last letter
-				block_cells_last(x, y+i, 1);
-			}else {
-				// Middle letter
-				block_cells_middle(x, y+i, 1);
-			}
+				if(i == 0) {
+					//First Letter
+					block_cells_first(x, y+i, 1);
+					
+				}else if (i == last) {
+					//Last letter
+					block_cells_last(x, y+i, 1);
+				}else {
+					// Middle letter
+					block_cells_middle(x, y+i, 1);
+				}
 
-			
-			
+				
+	
+			}
+            			
 
 		}
 		
@@ -342,24 +371,29 @@ public class SimpleScrabble{
 		int len = letters.length();
 		int last = len - 1;
 		int pointsword = 0;
+      int points = 0;
 		for(int i = 0; i < len ; i ++) {
 			
 			char einf = letters.charAt(i);
-			int points = this.lPoints[index_of_character(einf)];
-						
-			this.board[y][x+i].setLetter(einf, points);
-			pointsword += this.board[y][x+i].getValue();
-			
-			if(i == 0) {
-				//First Letter
-				block_cells_first(x+i, y, 0);
+         int index = index_of_character(einf);
+			if(index != -1)  {
+	            points = this.lPoints[index];
 				
-			}else if (i == last) {
-				//Last letter
-				block_cells_last(x+i, y, 0);
-			}else {
-				// Middle letter
-				block_cells_middle(x+i, y, 0);
+				this.board[y][x+i].setLetter(einf, points);
+				pointsword += this.board[y][x+i].getValue();
+				
+				if(i == 0) {
+					//First Letter
+					block_cells_first(x+i, y, 0);
+					
+				}else if (i == last) {
+					//Last letter
+					block_cells_last(x+i, y, 0);
+				}else {
+					// Middle letter
+					block_cells_middle(x+i, y, 0);
+				}
+				
 			}
 
 		}
