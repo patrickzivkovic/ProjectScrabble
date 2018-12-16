@@ -47,8 +47,8 @@ public class SimpleScrabble{
 	* @param mul                    cell multiplier                         
 	*/
 	public void setMultiplier(int x, int y, int mul) {
-		if(this.board[x][y].isEmpty()) {
-			this.board[x][y].setMultiplier(mul);
+		if(this.board[y][x].isEmpty()) {
+			this.board[y][x].setMultiplier(mul);
 		}
 	}
 //
@@ -138,14 +138,20 @@ public class SimpleScrabble{
 	private boolean condition3(String letters, int x, int y, int direction) {
 		if(direction == 0) {
 			// left to right
+			// first index of board is row, second one is column
+			// and we want to go from column to column
+			// but user input x is the column
+			// and user input y is the row
+			// so we need to switch them => board[y][x]
+			// And as we go from left to right, we want to traverse the second [] indices
 			for(int i = 0; i < letters.length(); i ++) {
-				if(this.board[x+i][y].isBlocked()) return false;
+				if(this.board[y][x+i].isBlocked()) return false;
 			}
 			return true;
 		}else {
 			// top to bottom
 			for(int i = 0; i < letters.length(); i ++) {
-				if(this.board[x][y+i].isBlocked()) return false;
+				if(this.board[y+i][x].isBlocked()) return false;
 			}
 			return true;
 		}
@@ -154,102 +160,141 @@ public class SimpleScrabble{
 		// (x, y) position of character
 		if(direction == 0) {
 
-			if(y+1 <= this.size - 1) 
-				//Blocking above the e
-				System.out.println("Blocked, before blocking?: " + this.board[x][y+1].isBlocked());
-				this.board[x][y+1].block();
-				System.out.println("Blocked, after blocking?: " + this.board[x][y+1].isBlocked());
-				
-			
-			if(y-1 >= 0) 
-				this.board[x][y-1].block();
-			
-			if(x - 1 >= 0) 
-				this.board[x-1][y].block();	
-			
-			if(x - 1 >= 0 && y + 1 <= this.size-1) 
-				this.board[x-1][y+1].block();
-			
-			if(x-1 >= 0 && y - 1 >= 0) 
-				this.board[x-1][y-1].block();
-				
-		}else {
+			// left to right
+			// first index of board is row, second one is column
+			// and we want to go from column to column
+			// but user input x is the column
+			// and user input y is the row
+			// so we need to switch them => board[y][x]
+			// And as we go from left to right, we want to traverse the second [] indices
 			
 
+			//Block cells left of the first letter
 			
-			if(x+1 <= this.size - 1)
-				this.board[x+1][y].block();
+			//left straigt
+			if(x - 1 >= 0) 
+				this.board[y][x-1].block();	
+			//left down
+			if(x - 1 >= 0 && y + 1 <= this.size-1) 
+				this.board[y+1][x-1].block();
+			//left up
+			if(x-1 >= 0 && y - 1 >= 0) 
+				this.board[y-1][x-1].block();
 			
-			if(x-1 >= 0) 
-				this.board[x-1][y].block();
 			
+			//Block the cells above and below the current letter
 			
+			//Below
+			if(y+1 <= this.size - 1) 
+				this.board[y+1][x].block();
+
+			// Above
 			if(y-1 >= 0) 
-				this.board[x][y-1].block();
+				this.board[y-1][x].block();
 			
-			if(x + 1 <= this.size - 1 && y - 1 >= 0) 
-				this.board[x+1][y-1].block();
 			
-			if(x - 1 >= 0 && y - 1 >= 0) 
-				this.board[x-1][y-1].block();
+				
+		}else {
+	
+			
+			//Block cells above
+			
+			//Above straigt
+			if(y-1 >= 0) this.board[y-1][x].block();
+			
+			//Above right
+			if(y-1 >= 0 && x+1 <= this.size - 1) this.board[y-1][x+1].block();
+			
+			//Above left
+			if(y-1 >= 0 && x - 1 >= 0) this.board[y-1][x-1].block();
+	
+			
+			//Block cells left and right
+
+			// left
+			if(x-1 >= 0) this.board[y][x-1].block();
+			// right
+			if(x+1 <= this.size - 1) this.board[y][x+1].block();
+
 		}
 	}
 	private void block_cells_middle(int x, int y, int direction) {
 		if(direction == 0) {
-			if(y + 1 <= this.size -1) 
-				this.board[x][y+1].block();
 			
+			//first [] is row, second[] is column
+			// We want to block the cells above and below board[y][x]
+			// again because user inputs x as column and y as row
+			
+			//Block the cell below
+			if(y + 1 <= this.size -1) 
+				this.board[y+1][x].block();
+			//Block the cell above
 			if(y-1 >= 0) 
-				this.board[x][y-1].block();
+				this.board[y-1][x].block();
 		}else {
 
-			if(x+1 <= this.size - 1)
-				this.board[x+1][y].block();
+			//Block left and right (y stays the same)
 			
-			if(x-1 >= 0) 
-				this.board[x-1][y].block();
+			//right
+			if(x+1 <= this.size - 1) this.board[y][x+1].block();
+			//left
+			if(x-1 >= 0) this.board[y][x-1].block();
 			
 		}		
 	}
 	private void block_cells_last(int x, int y, int direction) {
+		
+		//first [] is row, second[] is column
+		// We want to block the cells above and below board[y][x]
+		// again because user inputs x as column and y as row
+		
 		if(direction == 0) {
 			//top and bottom from current character
-			if(y-1 >= 0) 
-				this.board[x][y-1].block();
 			
+			//Above
+			if(y-1 >= 0) 
+				this.board[y-1][x].block();
+			//below
 			if(y+1 <= this.size - 1 )
-				this.board[x][y+1].block();
+				this.board[y+1][x].block();
+			
 			
 			//Right straight, right diagonal up and right diagonal down
 
+			//right straight
 			if(x+1 <= this.size - 1) 
-				this.board[x + 1][y].block();
-			
+				this.board[y][x+1].block();
+			//right above
 			if(x+1 <= this.size - 1 && y - 1 >= 0)
-				this.board[x + 1][y-1].block();
-			
+				this.board[y-1][x+1].block();
+			//right below
 			if(x+1 <= this.size - 1 && y + 1 <= this.size - 1)
-				this.board[x + 1][y+1].block();
+				this.board[y + 1][x+1].block();
 		}else {
+			
 			//top down
 			
 			
 			//left and right from current
-			if(x+1 <= this.size - 1) 
-				this.board[x+1][y].block();
 			
+			//right
+			if(x+1 <= this.size - 1) 
+				this.board[y][x+1].block();
+			//left
 			if(x - 1 >= 0) 
-				this.board[x-1][y].block();
+				this.board[y][x-1].block();
+			
 			
 			// bottom left diag, bottom right diag and bottom straigt
+			// bottom straigt
 			if(y+1 <= this.size - 1) 
-				this.board[x][y+1].block();
-			
+				this.board[y+1][x].block();
+			// bottom right
 			if(x+1 <= this.size - 1 && y + 1 <= this.size)
-				this.board[x+1][y+1].block();
-			
+				this.board[y+1][x+1].block();
+			// bottom left
 			if(x - 1 >= 0 && y+1 <= this.size - 1) 
-				this.board[x-1][y+1].block();
+				this.board[y+1][x-1].block();
 		}
 	}
 	private int insert_top_to_bottom(String letters, int x, int y) {
@@ -266,7 +311,6 @@ public class SimpleScrabble{
 			pointsword += this.board[y+i][x].getValue();
 			
 			if(i == 0) {
-				if(x != 0 && y != 0 && x != this.size - 1 && y != this.size - 1)
 				//First Letter
 				block_cells_first(x, y+i, 1);
 				
@@ -300,14 +344,14 @@ public class SimpleScrabble{
 			
 			if(i == 0) {
 				//First Letter
-				block_cells_first(y, x+i, 0);
+				block_cells_first(x+i, y, 0);
 				
 			}else if (i == last) {
 				//Last letter
-				block_cells_last(y, x+i, 0);
+				block_cells_last(x+i, y, 0);
 			}else {
 				// Middle letter
-				block_cells_middle(y, x+i, 0);
+				block_cells_middle(x+i, y, 0);
 			}
 
 		}

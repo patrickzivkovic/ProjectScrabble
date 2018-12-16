@@ -1,44 +1,44 @@
 
 public class main {
-	public static void main(String[] args) {
+	public static void main (String[] args) {
 		
-		String[] dictionary ={"sand","queasy","dust", "sandy", "dusty","easy", "yield"};
-		char[] letters = {'a','d','e', 'i', 'l', 'n', 'q', 's', 't', 'u', 'y'};
-		int[] points = {1,2,1,1,1,1,10,1,1,1,4};
-		int[] nrTiles = {2,3,2,2,2,2,1,2,2,2,2};
-//		SimpleScrabble game = new SimpleScrabble(dictionary, 8, letters, points, nrTiles);
-
-		int size = 5;
-//		
-//		for (int i = 0; i < size; i ++) {
-//			System.out.println(i);
-//		}
-
-		char [] letters_deluxe = {'a', 'c', 'm'};
-		int [] nrTiles_deluxe = {3, 4, 2};
-
-		int [] nrLettersNeeded = new int[nrTiles_deluxe.length];
-//		
-//		for(int i = 0; i < nrLettersNeeded.length; i ++) {
-//			nrLettersNeeded[i] = 0;
-//		}
 		
+		// Make 2D Array
+		int size = 4;
+		int [][] intArray = new int [size][size];
 
-//		String word = "mamaccccc";
+
+		printSquareArray(intArray);
 		
-
-		int x = 5;
-		String word = "abc";
-		int w_size = 3;
-
-
-		System.out.println(word.length());
-		for(int i = 0; i < w_size; i ++) {
-			System.out.println("X Position: " + (x+i));
+		System.out.println("Inserting 4 at position (1, 2)");
+		intArray[1][2] = 4;
+		printSquareArray(intArray);
+		
+		int word_length = 4;
+		int zeile = 1;
+		int spalte = 1;
+		int direction = 1; //left to right
+		//Check if word too long
+		
+		if(direction == 0) {
+			if(size - spalte < word_length) {
+				System.out.println("Cannot insert word: its too long");
+			}
+		}else {
+			if(size - zeile < word_length) {
+				System.out.println("Cannot insert word: its too long");
+			}
 		}
-
+		
 	}
-
 	
-	
+	private static void printSquareArray(int[][] array) {
+		
+		for(int i = 0; i < array.length; i ++) {
+			for(int j = 0; j < array.length; j ++) {
+				System.out.print(array[i][j]);
+			}
+			System.out.println("");
+		}
+	}
 }

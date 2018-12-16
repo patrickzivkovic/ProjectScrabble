@@ -61,7 +61,7 @@ public class Cell{
 	*/
 	public boolean setLetter(char letter, int points) {
 		if(this.isEmpty()) {
-			System.out.println("Setting Letter");
+//			System.out.println("Setting Letter");
 			this.letter = letter;
 			this.points = points;
 			this.empty = false;
