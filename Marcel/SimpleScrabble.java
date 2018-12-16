@@ -1,3 +1,5 @@
+//Patrick Zivkovic, 01422129
+
 public class SimpleScrabble{
 	
 	private String [] dictionary;
@@ -426,7 +428,7 @@ public class SimpleScrabble{
 		}
 		return false;
 	}
-	public int placeTiles() {
+	public int placeTiles(int x, int y, int direction, String letters) {
 		return 0;
 	}
 //

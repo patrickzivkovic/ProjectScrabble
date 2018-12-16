@@ -1,3 +1,5 @@
+//Patrick Zivkovic, 01422129
+
 public class Cell{
 	
 	private char letter;
