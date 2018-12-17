@@ -13,7 +13,7 @@ public class Cell{
 	* @param multiplier 
 	*/
 	Cell(int multiplier){
-		this.letter = '9';
+		this.letter = '9'; // '9' marks an empty cell
 		this.empty = true;
 		this.multiplier = multiplier;
 		this.points = 0;
@@ -35,7 +35,7 @@ public class Cell{
 	public void reset() {
 		this.empty = true;
 		this.blocked = false;
-		this.multiplier = 1; //maybe comment out
+		this.multiplier = 1;
 		this.letter = '9';
 		this.points = 0;
 	}
@@ -70,7 +70,6 @@ public class Cell{
 	*/
 	public boolean setLetter(char letter, int points) {
       
-   //			System.out.println("Setting Letter");
    	this.letter = letter;
    	this.points = points;
    	this.empty = false;

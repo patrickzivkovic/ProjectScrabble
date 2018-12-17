@@ -7,6 +7,7 @@ public class SimpleScrabble{
 	private char[] letters;
 	private int [] lPoints;
 	private int [] lTiles;
+   private int [] lTilesCopy;
 	private Cell [][] board;
 	
 	
@@ -27,6 +28,7 @@ public class SimpleScrabble{
 		this.letters = letters;
 		this.lPoints = lPoints;
 		this.lTiles = lTiles;
+      this.lTilesCopy = this.lTiles.clone();
 		
 		
 		// Creating multidimensional array of class Cell
@@ -53,17 +55,20 @@ public class SimpleScrabble{
 			this.board[y][x].setMultiplier(mul);
 		}
 	}
+   
+   public int[] getlTtilesCopy(){
+     return lTilesCopy;
+   }
 //
 //	// Clears the board, resets game to initial state       
 	public void clear() {
 		for(int zeile = 0; zeile < this.size; zeile++) {
 			for(int spalte = 0; spalte < this.size; spalte++) {
-//				this.board[zeile][spalte] = new Cell(1);
-//				this.free[zeile][spalte] = true;
 				this.board[zeile][spalte].reset();
 				
 			}
 		}
+      lTilesCopy = lTiles.clone();
 	}
 	
 	public void printBlocked() {
@@ -110,6 +115,7 @@ public class SimpleScrabble{
 	
 		//Check if letters is in dictionary:
 		if(!condition1(letters)) return -1;
+      
 		
 		//Array with numbers how often we need each letter
 		int [] nrLettersNeeded = nrLettersNeeded(letters);
@@ -119,7 +125,9 @@ public class SimpleScrabble{
 
 		//Check if none of the fields are blocked
 		if(!condition3(letters, x, y, direction)) return -1;
-
+      
+      //Check if all the letters of the word are avaiable
+      if(!condition4(letters, this.letters)) return -1;
 		
 		int points;
 		//Set word
@@ -139,7 +147,7 @@ public class SimpleScrabble{
 	}
 	private void update_lTiles(int [] nrLettersNeeded) {
 		for(int i = 0; i < this.lTiles.length; i ++) {
-			this.lTiles[i] -= nrLettersNeeded[i];
+			this.lTilesCopy[i] -= nrLettersNeeded[i];
 		}
 		
 	}
@@ -164,6 +172,20 @@ public class SimpleScrabble{
 			return true;
 		}
 	}
+   
+   private boolean condition4(String word, char[] letters) {
+      //check if all the letters of word are avaiable in the game
+      int count;
+      for(int i = 0; i < word.length(); i++) {
+         count = 0;
+         for(int j = 0; j < letters.length; j++) {
+            if(word.charAt(i) == letters[j]) count++; 
+         } 
+         if(count == 0) return false;
+      }
+      return true;
+   }
+   
 	private void block_cells_first(int x, int y, int direction) {
 		// (x, y) position of character
 		if(direction == 0) {
@@ -425,7 +447,7 @@ public class SimpleScrabble{
 //		int [] nrLettersNeeded = nrLettersNeeded(letters);
 		
 		for(int i = 0; i < nrLettersNeeded.length; i ++) {
-			if(nrLettersNeeded[i] > this.lTiles[i]) return false;
+			if(nrLettersNeeded[i] > this.lTilesCopy[i]) return false;
 		}
 		return true;
 	}

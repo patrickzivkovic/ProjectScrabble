@@ -4,38 +4,26 @@ public class Bsp10 {
 	public static void main(String[] args) {
 		
 
-		String[] dictionary ={"sand","queasy","dust", "sandy", "dusty","easy", "yield"};
-		char[] letters = {'a','d','e', 'i', 'l', 'n', 'q', 's', 't', 'u', 'y'};
-		int[] points = {1,2,1,1,1,1,10,1,1,1,4};
-		int[] nrTiles = {2,3,2,2,2,2,1,2,2,2,2};
-		SimpleScrabble game = new SimpleScrabble(dictionary, 8, letters, points, nrTiles);
-		game.setMultiplier(5,4,3);
+		String[] dictionary ={"orange", "door", "computer", "construction", "winter", "hotel", "box", "nut", "tunnel"};
+		char[] letters = {'d', 'n', 'h', 'b', 'u', 'k', 'l', 'x', 'p', 't', 'c', 'q', 'i', 'z', 'f', 'm', 's', 'a', 'w', 'y', 'o', 'j', 'e', 'g', 'r', 'v'};
+		int[] points = {6, 10, 8, 8, 1, 1, 3, 6, 1, 3, 2, 6, 4, 7, 9, 4, 1, 10, 2, 5, 1, 4, 8, 1, 7, 5};
+		int[] nrTiles = {1, 2, 3, 3, 1, 3, 1, 2, 2, 2, 1, 2, 3, 1, 2, 1, 2, 1, 1, 2, 1, 3, 1, 1, 1, 3};
+		SimpleScrabble game = new SimpleScrabble(dictionary, 15, letters, points, nrTiles);
+		game.setMultiplier(3,6,1);
 
-		int p1 = game.placeTilesDisjoint(2,4,0,"easy"); // p1 has value 15 (=1+1+1+4*3)
-		int p2 = game.placeTilesDisjoint(5,0,1,"sand"); // tiles are not placed (p2=-1) because 'd' of "sand" would be adjacent to 'y' of "easy"
-		 p2 = game.placeTilesDisjoint(0,0,1,"sand"); // successful placement, p2 = 5 (1+1+1+2)
-		int p3 = game.placeTilesDisjoint(3,0,0,"dust"); // unsuccessful because there are no more 's' tiles available, p3=-1
-		game.printBoard();                              // console output is:
-//		s.......
-//		a.......
-//		n.......
-//		d.......
-//		..easy..
-//		........
-//		........
-//		........
-
-		game.printBlocked();
-		game.clear();   //board is erased
-		game.setMultiplier(5,4,3);
+		int p1 = game.placeTilesDisjoint(3,6,0,"nut");
+      System.out.println(p1); 
 		
+		game.printBoard();                              
+
 		game.printBlocked();
+      for(int el:game.getlTtilesCopy())
+        System.out.print(el + " ");
+      System.out.println();  
+		game.clear(); 
+      for(int el:game.getlTtilesCopy())
+        System.out.print(el + " ");  //board is erased
       
-      Cell c = new Cell(1);
-      c.setLetter('z',1);
-      System.out.println(c.getLetter());
-      System.out.println(c.isEmpty());
-//		
 	}
 
 	
