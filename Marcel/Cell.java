@@ -69,22 +69,14 @@ public class Cell{
 	* @return       true if success, false otherwise 
 	*/
 	public boolean setLetter(char letter, int points) {
-		if(this.isEmpty()) {
-//			System.out.println("Setting Letter");
-			this.letter = letter;
-			this.points = points;
-			this.empty = false;
-			this.blocked = true;
-			return true;
-		}
-		else return false;
+      
+   //			System.out.println("Setting Letter");
+   	this.letter = letter;
+   	this.points = points;
+   	this.empty = false;
+   	this.blocked = true;
+   		
+      return true;   
 	}
-	
-	public String toString() {
-		String out = "";
-		out += "Letter: " + getLetter() + "\n";
-		out += "Value: " + getValue() + "\n";
-		
-		return out;
-	}
+
 }
